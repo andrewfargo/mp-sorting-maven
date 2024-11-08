@@ -42,6 +42,8 @@ public class InsertionSorter<T> implements Sorter<T> {
 
   /**
    * Sort an array in place using insertion sort.
+   * Implemented to mimic the process found in the CSC207 reading
+   * and algorithm S in Knuth's TAOCP 5.2.1. See README for citations.
    *
    * @param values
    *   an array to sort.
@@ -55,6 +57,16 @@ public class InsertionSorter<T> implements Sorter<T> {
    */
   @Override
   public void sort(T[] values) {
-    // STUB
+    for (int j = 1; j < values.length; j++) {
+      T element = values[j];
+      for (int i = j - 1; j > 0; j--) {
+	if (element.compare(values[i]) >= 0) {
+	  break;
+	} // if
+	values[i+1] = values[i];
+	i--;
+      } // for i
+      values[i+1] = element;
+    } // for j
   } // sort(T[])
 } // class InsertionSorter
