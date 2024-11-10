@@ -41,7 +41,55 @@ public class MergeSorter<T> implements Sorter<T> {
   // +---------+
 
   /**
+   * Sort a subarray using merge sort. A recursive "kernel" that
+   * keeps track of the start and end bounds.
+   *
+   * @param values
+   *   The array.
+   * @param start
+   *   The (inclusive) lower bound.
+   * @param end
+   *   The (exclusive) upper bound.
+   */
+  @SuppressWarnings({"unchecked"})
+  private void mergeSort(T[] values, int start, int end) {
+    if (end - start <= 1) {
+      return;
+    } // if
+    /* Recurse. */
+    int mid = start + (end - start) / 2;
+    mergeSort(values, start, mid);
+    mergeSort(values, mid, end);
+
+    /* Merge the two arrays. */
+    T[] merged = (T[]) new Object[end-start];
+    int i = start;
+    int j = mid;
+    int n = 0;
+    while (i < mid && j < end) {
+      if (order.compare(values[i], values[j]) <= 0) {
+	merged[n++] = values[i++];
+      } else {
+	merged[n++] = values[j++];
+      } // if/else
+    } // while
+
+    /* Send the remaining elements. */
+    while (i < mid) {
+      merged[n++] = values[i++];
+    } // while
+    while (j < end) {
+      merged[n++] = values[j++];
+    } // while
+    i = start;
+    for (T val : merged) {
+      values[i++] = val;
+    } // for
+  } // mergeSort
+  
+  /**
    * Sort an array in place using merge sort.
+   * Made to mimic the merge sort presented in the CSC207 reading.
    *
    * @param values
    *   an array to sort.
@@ -55,6 +103,6 @@ public class MergeSorter<T> implements Sorter<T> {
    */
   @Override
   public void sort(T[] values) {
-    // STUB
+    mergeSort(values, 0, values.length);
   } // sort(T[])
 } // class MergeSorter
