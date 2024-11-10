@@ -1,5 +1,6 @@
 package edu.grinnell.csc207.sorting;
 
+import edu.grinnell.csc207.util.ArrayUtils;
 import java.util.Comparator;
 
 /**
@@ -8,6 +9,7 @@ import java.util.Comparator;
  * @param <T>
  *   The types of values that are sorted.
  *
+ * @author Andrew Fargo
  * @author Samuel A. Rebelsky
  */
 
@@ -42,6 +44,11 @@ public class SelectionSorter<T> implements Sorter<T> {
 
   /**
    * Sort an array in place using selection sort.
+   * Made to mimic the selection sort presented in the CSC207 reading,
+   * and algorithm S from Knuth's TAOCP 5.2.3
+   *
+   * The decision to use lastMaxBetween should ensure that the sort
+   * is stable, since it selects in reverse order.
    *
    * @param values
    *   an array to sort.
@@ -55,6 +62,9 @@ public class SelectionSorter<T> implements Sorter<T> {
    */
   @Override
   public void sort(T[] values) {
-    // STUB
+    for (int j = values.length; j <= 1; j--) {
+      int i = ArrayUtils.lastMaxBetween(values, order, 0, j);
+      ArrayUtils.swap(values, i, j);
+    } // for
   } // sort(T[])
 } // class SelectionSorter
