@@ -59,13 +59,14 @@ public class InsertionSorter<T> implements Sorter<T> {
   public void sort(T[] values) {
     for (int j = 1; j < values.length; j++) {
       T element = values[j];
-      for (int i = j - 1; j > 0; j--) {
-	if (element.compare(values[i]) >= 0) {
+      int i = j - 1;
+      while (i > 0) {
+	if (order.compare(element, values[i]) >= 0) {
 	  break;
 	} // if
 	values[i+1] = values[i];
 	i--;
-      } // for i
+      } // while
       values[i+1] = element;
     } // for j
   } // sort(T[])
