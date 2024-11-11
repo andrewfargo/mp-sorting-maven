@@ -43,6 +43,13 @@ public class SortTools {
    */
   static Random rand;
 
+  /**
+   * Prefixes for our sorters.
+   */
+  static final String[] prefixes = 
+      new String[] {"", "edu.grinnell.csc207.sorting.", 
+          "edu.grinnell.csc207.util."};
+
   // +------+--------------------------------------------------------
   // | Main |
   // +------+
@@ -380,15 +387,21 @@ public class SortTools {
    * Get the sorter for a particular class name.  Yay introspection!
    */
   static Sorter<Comparable> getSorter(String name) {
-    Class<?> sclass;
+    Class<?> sclass = null;
     Comparator<Comparable> order = (x,y) -> x.compareTo(y);
 
-    try {
-      sclass = Class.forName(name);
-    } catch (Exception e) {
+    for (String prefix : prefixes) {
+      try {
+        sclass = Class.forName(prefix + name);
+        break;
+      } catch (Exception e) {
+      } // try/catch
+    } // for
+
+    if (null == sclass) {
       System.err.println("Cannot find class: " + name);
       return null;
-    } // try/catch
+    } // if
 
     Constructor<Sorter> construct = null;
     try {

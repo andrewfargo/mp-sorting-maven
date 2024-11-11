@@ -51,8 +51,8 @@ public class FakeSorter<T> implements Sorter<T> {
    *   The array has been sorted according to some order (often
    *   one given to the constructor).
    * @post
-   *   For all i, 0 &lt; i &lt; vals.length,
-   *     order.compare(vals[i-1], vals[i]) &lt;= 0
+   *   For all i, 0 &lt; i &lt; values.length,
+   *     order.compare(values[i-1], values[i]) &lt;= 0
    */
   @Override
   public void sort(T[] values) {

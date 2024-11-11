@@ -118,4 +118,35 @@ public class ArrayUtils {
     } // for i
     return max;
   } // maxBetween
+
+  /*
+   * Convert a subset of an array to a string. Intended mostly for debug 
+   * printing in which we need to keep track of parts of an array.
+   *
+   * @param <T>
+   *   The type of elements in the array.
+   * @param values
+   *   The array.
+   * @param lb
+   *   The lower bound of the section of interest.
+   * @param ub
+   *   The upper bound of the section of interest.
+   */
+  public static <T> String toString(T[] values, int lb, int ub) {
+    if (lb >= ub) {
+      return "[]";
+    } // if
+    StringBuilder result = new StringBuilder("[");
+    result.append(lb);
+    result.append(":");
+    result.append(values[lb].toString());
+    for (int i = lb+1; i < ub; i++) {
+      result.append(", ");
+      result.append(i);
+      result.append(":");
+      result.append(values[i].toString());
+    } // for
+    result.append("]");
+    return result.toString();
+  } // toString(T[], int, int)
 } // ArrayUtils
