@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 /**
  * Tests of FargoAndrewSorter.
  */
-public class TestQuicksorter extends TestSorter {
+public class TestFargoAndrewSorter extends TestSorter {
   /**
    * Set up the sorters.
    */
