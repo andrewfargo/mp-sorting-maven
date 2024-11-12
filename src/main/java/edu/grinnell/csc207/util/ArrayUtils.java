@@ -1,6 +1,5 @@
 package edu.grinnell.csc207.util;
 
-import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -59,7 +58,7 @@ public class ArrayUtils {
   } // permute(T[])
 
   /**
-   * Convert a subset of an array to a string. Intended mostly for debug 
+   * Convert a subset of an array to a string. Intended mostly for debug
    * printing in which we need to keep track of parts of an array.
    *
    * @param <T>
@@ -70,6 +69,7 @@ public class ArrayUtils {
    *   The lower bound of the section of interest.
    * @param ub
    *   The upper bound of the section of interest.
+   * @return The string representation of that subarray.
    */
   public static <T> String toString(T[] values, int lb, int ub) {
     if (lb >= ub) {
@@ -79,7 +79,7 @@ public class ArrayUtils {
     result.append(lb);
     result.append(":");
     result.append(values[lb].toString());
-    for (int i = lb+1; i < ub; i++) {
+    for (int i = lb + 1; i < ub; i++) {
       result.append(", ");
       result.append(i);
       result.append(":");

@@ -42,7 +42,7 @@ public class SelectionSorter<T> implements Sorter<T> {
   // | Methods |
   // +---------+
 
-    /**
+  /**
    * Find the last maximum index of an array between two indices.
    * My understanding of low-level cache is that iterating backwards
    * tends to be less efficient, though I've yet to test it.
@@ -67,11 +67,11 @@ public class SelectionSorter<T> implements Sorter<T> {
       // This is inefficient access, but I'm betting
       // on the compiler or cache optimizing it.
       if (order.compare(values[max], values[i]) <= 0) {
-	max = i;
+        max = i;
       } // if
     } // for i
     return max;
-  } // maxBetween
+  } // select
 
   /**
    * Perform selection sort on a portion of the array.
@@ -89,7 +89,7 @@ public class SelectionSorter<T> implements Sorter<T> {
       ArrayUtils.swap(values, i, j);
     } // for
   } // sortPartial(T[], int, int)
-  
+
   /**
    * Sort an array in place using selection sort.
    * Made to mimic the selection sort presented in the CSC207 reading,

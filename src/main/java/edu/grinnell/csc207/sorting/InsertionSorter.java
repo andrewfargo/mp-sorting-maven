@@ -50,16 +50,16 @@ public class InsertionSorter<T> implements Sorter<T> {
    *   The index of the element to be sorted.
    */
   private void insert(T[] values, int index) {
-      T element = values[index];
-      int i = index - 1;
-      while (i >= 0) {
-	if (order.compare(element, values[i]) >= 0) {
-	  break;
-	} // if
-	values[i+1] = values[i];
-	i--;
-      } // while
-      values[i+1] = element;
+    T element = values[index];
+    int i = index - 1;
+    while (i >= 0) {
+      if (order.compare(element, values[i]) >= 0) {
+        break;
+      } // if
+      values[i + 1] = values[i];
+      i--;
+    } // while
+    values[i + 1] = element;
   } // insert()
 
   /**

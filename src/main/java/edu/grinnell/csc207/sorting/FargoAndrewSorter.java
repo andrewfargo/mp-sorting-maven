@@ -2,10 +2,6 @@ package edu.grinnell.csc207.sorting;
 
 import java.util.Comparator;
 import java.util.Random;
-import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
-import java.util.Arrays;
 
 import edu.grinnell.csc207.util.ArrayUtils;
 
@@ -29,10 +25,105 @@ public class FargoAndrewSorter<T> implements Sorter<T> {
   Random rng;
 
   /**
-   * A finer-detail selection sort.
+   * Temporary result storage.
    */
-  SelectionSorter ssort;
-  
+  int[] result;
+
+  /*
+   * Methods copied over from other sorts in this MP.
+   */
+
+  /**
+   * Find the last maximum index of an array between two indices.
+   * My understanding of low-level cache is that iterating backwards
+   * tends to be less efficient, though I've yet to test it.
+   *
+   * Thus, instead of iterating backwards, I choose to take equal
+   * elements as maxes; it's the same number of comparisons but
+   * takes more swaps. The upside is that it may be faster
+   * on the machine level.
+   *
+   * @param values
+   *   The array
+   * @param start
+   *   The starting index. (inclusive)
+   * @param end
+   *   The ending index. (exclusive)
+   * @return The largest index for which all values of the array
+   *   are less than or equal to the value at that index.
+   */
+  private int select(T[] values, int start, int end) {
+    int max = start;
+    for (int i = start + 1; i < end; i++) {
+      // This is inefficient access, but I'm betting
+      // on the compiler or cache optimizing it.
+      if (order.compare(values[max], values[i]) <= 0) {
+        max = i;
+      } // if
+    } // for i
+    return max;
+  } // select
+
+  /**
+   * Perform selection sort on a portion of the array.
+   * Not used for typical selection sort, since it is
+   * not a divide-and-conquer algorithm, but useful
+   * for my personal sort.
+   *
+   * @param values The array
+   * @param l The inclusive lower bound.
+   * @param r The exclusive upper bound.
+   */
+  private void sortPartial(T[] values, int l, int r) {
+    for (int j = r - 1; j > l; j--) {
+      int i = this.select(values, l, j + 1);
+      ArrayUtils.swap(values, i, j);
+    } // for
+  } // sortPartial(T[], int, int)
+
+  /**
+   * Partition the subarray according to the pivot, using
+   * the dutch national flag algorithm.
+   *
+   * @param values
+   *   The array.
+   * @param pivot
+   *   The pivot.
+   * @param start
+   *   The (inclusive) lower bound of the subarray.
+   * @param end
+   *   The (exclusive) upper bound of the subarray.
+   */
+  private void partition(T[] values, T pivot,
+                         int start, int end) {
+    int red = start;
+    int white = start;
+    int blue = end;
+
+    while (white < blue) {
+      int cmp = order.compare(values[white], pivot);
+      if (cmp < 0) {
+        // red
+        ArrayUtils.swap(values, white, red);
+        red++;
+        white++;
+      } else if (cmp > 0) {
+        // blue
+        ArrayUtils.swap(values, white, blue - 1);
+        blue--;
+      } else {
+        // white
+        white++;
+      } // if/else
+    } // while
+    result[0] = red;
+    result[1] = white;
+  } // partition(T[], T, int, int)
+
+  /*
+   * End copied methods section.
+   */
+
   /**
    * Create the sorter using a comparator.
    *
@@ -43,7 +134,7 @@ public class FargoAndrewSorter<T> implements Sorter<T> {
   public FargoAndrewSorter(Comparator<? super T> comparator) {
     this.order = comparator;
     this.rng = new Random();
-    this.ssort = new SelectionSorter(order);
+    this.result = new int[2];
   } // FargoAndrewSorter(Comparator)
 
   /**
@@ -65,7 +156,7 @@ public class FargoAndrewSorter<T> implements Sorter<T> {
   private T min(T first, T second) {
     return order.compare(first, second) < 0 ? first : second;
   } // min(T, T)
-  
+
   /**
    * Finds the middle of three random values without branches.
    * @param values
@@ -74,6 +165,8 @@ public class FargoAndrewSorter<T> implements Sorter<T> {
    *   The inclusive lower bound of the subarray.
    * @param r
    *   The exclusive upper bound of the subarray.
+   * @return
+   *   The middle of three random values between values[l] and values[r - 1]
    */
   @SuppressWarnings({"unchecked"})
   private T getMedian(T[] values, int l, int r) {
@@ -81,9 +174,9 @@ public class FargoAndrewSorter<T> implements Sorter<T> {
     /* https://stackoverflow.com/questions/1582356
        /fastest-way-of-finding-the-middle-value-of-a-triple/14676309#14676309 */
     return max(min(samp[0], samp[1]),
-	       min(max(samp[0], samp[1]), samp[2]));
+               min(max(samp[0], samp[1]), samp[2]));
   } // getMedian(T[], int, int)
-  
+
   /**
    * The recursive "kernel" to the FargoAndrewSorter.
    * @param values
@@ -94,22 +187,25 @@ public class FargoAndrewSorter<T> implements Sorter<T> {
    *   The exclusive upper bound.
    */
   private void fsort(T[] values, int l, int r) {
-    final int M = 20;
-    if (r - l <= M) {
-      ssort.sortPartial(values, l, r);
+    final int threshold = 20;
+    if (r - l <= threshold) {
+      this.sortPartial(values, l, r);
       return;
     } // if
-    
+
     // T pivot = values[rng.nextInt(r - l) + l];
     final T pivot = this.getMedian(values, l, r);
 
-    int aux[] = new int[2];
-    Quicksorter.partition(values, pivot, order, l, r, aux);
-    
-    fsort(values, l, aux[0]);
-    fsort(values, aux[1], r);
+    this.partition(values, pivot, l, r);
+    /* Push these to the stack, since they may get modified
+       on recursive calls. */
+    int m1 = result[0];
+    int m2 = result[1];
+
+    fsort(values, l, m1);
+    fsort(values, m2, r);
   } // fsort(T[])
-  
+
   /**
    * FargoAndrewSort- My entry into the sorting competition.
    * Implements a lot of the theory by Robert Sedgewick presented

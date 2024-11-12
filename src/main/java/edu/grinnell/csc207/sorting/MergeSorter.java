@@ -50,15 +50,15 @@ public class MergeSorter<T> implements Sorter<T> {
    * @param end the (exclusive) upper bound
    */
   private void merge(T[] source, T[] sink,
-		     int start, int mid, int end) {
+                     int start, int mid, int end) {
     int i = start;
     int j = mid;
     int n = start;
     while (i < mid && j < end) {
       if (order.compare(source[i], source[j]) <= 0) {
-	sink[n++] = source[i++];
+        sink[n++] = source[i++];
       } else {
-	sink[n++] = source[j++];
+        sink[n++] = source[j++];
       } // if/else
     } // while
 
@@ -72,8 +72,8 @@ public class MergeSorter<T> implements Sorter<T> {
     for (int k = start; k < end; k++) {
       source[k] = sink[k];
     } // for
-  }
-  
+  } // merge(T[], T[], int, int, int)
+
   /**
    * Sort a subarray using merge sort. A recursive "kernel" that
    * keeps track of the start and end bounds.
@@ -99,7 +99,7 @@ public class MergeSorter<T> implements Sorter<T> {
     /* Merge the two arrays. */
     merge(values, helper, start, mid, end);
   } // mergeSort
-  
+
   /**
    * Sort an array in place using merge sort.
    * Made to mimic the merge sort presented in the CSC207 reading.

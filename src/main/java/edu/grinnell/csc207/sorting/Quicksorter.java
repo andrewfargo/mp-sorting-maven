@@ -2,7 +2,6 @@ package edu.grinnell.csc207.sorting;
 
 import edu.grinnell.csc207.util.ArrayUtils;
 import java.util.Comparator;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Random;
 
 /**
@@ -29,7 +28,7 @@ public class Quicksorter<T> implements Sorter<T> {
    * Our random number generator to calculate the pivot.
    */
   Random rng;
-  
+
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -68,36 +67,34 @@ public class Quicksorter<T> implements Sorter<T> {
    *   The (exclusive) upper bound of the subarray.
    * @param result
    *   The result of the computation, must be allocated.
-   * @return Two integers representing the bounds of
-   *   both partitions.
    */
-  public static <T> void partition(T[] values, T pivot,
-					Comparator<? super T> order,
-				    int start, int end, int[] result) {
+  private static <T> void partition(T[] values, T pivot,
+                                    Comparator<? super T> order,
+                                    int start, int end, int[] result) {
     int red = start;
     int white = start;
     int blue = end;
-    
+
     while (white < blue) {
       int cmp = order.compare(values[white], pivot);
       if (cmp < 0) {
-	// red
-	ArrayUtils.swap(values, white, red);
-	red++;
-	white++;
+        // red
+        ArrayUtils.swap(values, white, red);
+        red++;
+        white++;
       } else if (cmp > 0) {
-	// blue
-	ArrayUtils.swap(values, white, blue - 1);
-	blue--;
+        // blue
+        ArrayUtils.swap(values, white, blue - 1);
+        blue--;
       } else {
-	// white
-	white++;
+        // white
+        white++;
       } // if/else
     } // while
     result[0] = red;
     result[1] = white;
   } // partition(T[], T, Comparator<? super T>, int, int)
-  
+
   /**
    * Sort a subarray in place using a two-pivot Quicksort.
    * A recursive "kernel" to the "shell" of the sort() method.
@@ -120,11 +117,11 @@ public class Quicksorter<T> implements Sorter<T> {
 
     int[] aux = new int[2];
     Quicksorter.partition(values, pivot, order, start, end, aux);
-    
+
     /* Recurse. */
     quicksort(values, start, aux[0]);
     quicksort(values, aux[1], end);
-  }
+  } // quicksort(T[], int, int)
 
   /**
    * Sort an array in place using Quicksort.

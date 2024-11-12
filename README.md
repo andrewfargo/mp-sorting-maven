@@ -1,6 +1,18 @@
 # mp-sorting-maven
 
 An exploration of sorting in Java.
+Includes classes for Quicksort, Merge Sort, Insertion Sort, and Selection Sort.
+Includes a class for a modified Quicksort, named FargoAndrewSorter, for
+entry in the sorting competition.
+
+### Note to the Grader
+
+I am submitting this as of November 12, 2024.
+All 72 checkstyle violations are appearing from SortTools, SortExperiments,
+and QuicksortExperiments, none of which is in the scope of the mini-project.
+
+I have decided to leave these files alone rather than fix the style in case
+of merge conflicts in the future, since I am not responsible for them.
 
 ### Authors
 
