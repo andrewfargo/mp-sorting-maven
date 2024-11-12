@@ -59,67 +59,6 @@ public class ArrayUtils {
   } // permute(T[])
 
   /**
-   * Find the first maximum index of an array between two indices.
-   *
-   * @param <T>
-   *   The type of elements stored in the array.
-   * @param values
-   *   The array
-   * @param start
-   *   The starting index. (inclusive)
-   * @param end
-   *   The ending index. (exclusive)
-   * @return The smallest index for which all values of the array
-   *   are less than or equal to the value at that index.
-   */
-  public static <T> int maxBetween(T[] values, Comparator<? super T> order,
-				   int start, int end) {
-    int max = end - 1;
-    for (int i = start + 1; i < end; i++) {
-      // This is inefficient access, but I'm betting
-      // on the compiler or cache helping.
-      if (order.compare(values[max], values[i]) < 0) {
-	max = i;
-      } // if
-    } // for i
-    return max;
-  } // maxBetween
-  
-  /**
-   * Find the last maximum index of an array between two indices.
-   * My understanding of low-level cache is that iterating backwards
-   * tends to be less efficient, though I've yet to test it.
-   *
-   * Thus, instead of iterating backwards, I choose to take equal
-   * elements as maxes; it's the same number of comparisons but
-   * takes more swaps. The upside is that it may be faster
-   * on the machine level.
-   *
-   * @param <T>
-   *   The type of elements stored in the array.
-   * @param values
-   *   The array
-   * @param start
-   *   The starting index. (inclusive)
-   * @param end
-   *   The ending index. (exclusive)
-   * @return The largest index for which all values of the array
-   *   are less than or equal to the value at that index.
-   */
-  public static <T> int lastMaxBetween(T[] values, Comparator<? super T> order,
-				       int start, int end) {
-    int max = start;
-    for (int i = start + 1; i < end; i++) {
-      // This is inefficient access, but I'm betting
-      // on the compiler or cache optimizing it.
-      if (order.compare(values[max], values[i]) <= 0) {
-	max = i;
-      } // if
-    } // for i
-    return max;
-  } // maxBetween
-
-  /*
    * Convert a subset of an array to a string. Intended mostly for debug 
    * printing in which we need to keep track of parts of an array.
    *
