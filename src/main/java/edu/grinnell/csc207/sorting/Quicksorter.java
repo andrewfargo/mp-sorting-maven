@@ -2,6 +2,7 @@ package edu.grinnell.csc207.sorting;
 
 import edu.grinnell.csc207.util.ArrayUtils;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Random;
 
 /**
@@ -10,6 +11,7 @@ import java.util.Random;
  * @param <T>
  *   The types of values that are sorted.
  *
+ * @author Andrew N. Fargo
  * @author Samuel A. Rebelsky
  */
 
@@ -27,7 +29,7 @@ public class Quicksorter<T> implements Sorter<T> {
    * Our random number generator to calculate the pivot.
    */
   Random rng;
-
+  
   // +--------------+------------------------------------------------
   // | Constructors |
   // +--------------+
@@ -49,43 +51,53 @@ public class Quicksorter<T> implements Sorter<T> {
   // +---------+
 
   /**
-   * Sort a subarray using the Dutch National Flag algorithm.
+   * Partition the subarray according to the pivot, using
+   * the dutch national flag algorithm.
    *
+   * @param <T>
+   *   The type of objects to be sorted
    * @param values
-   *   The larger array
+   *   The array.
+   * @param pivot
+   *   The pivot.
+   * @param order
+   *   A comparator to judge different T values.
    * @param start
-   *   The (inclusive) lower bound
+   *   The (inclusive) lower bound of the subarray.
    * @param end
-   *   The (exclusive) upper bound
-   * @param p1
-   *   The first pivot
-   * @param p2
-   *   The second pivot
+   *   The (exclusive) upper bound of the subarray.
+   * @param result
+   *   The result of the computation, must be allocated.
+   * @return Two integers representing the bounds of
+   *   both partitions.
    */
-  private void dnf(T[] values, int start, int end, T p1, T p2) {
+  public static <T> void partition(T[] values, T pivot,
+					Comparator<? super T> order,
+				    int start, int end, int[] result) {
     int red = start;
     int white = start;
     int blue = end;
-
+    
     while (white < blue) {
-      boolean ltFirst = order.compare(values[white], p1) < 0;
-      boolean ltSecond = order.compare(values[white], p2) < 0;
-      if (ltFirst && ltSecond) {
+      int cmp = order.compare(values[white], pivot);
+      if (cmp < 0) {
 	// red
 	ArrayUtils.swap(values, white, red);
 	red++;
 	white++;
-      } else if (ltFirst || ltSecond) {
-	// white
-	white++;
-      } else {
+      } else if (cmp > 0) {
 	// blue
 	ArrayUtils.swap(values, white, blue - 1);
 	blue--;
+      } else {
+	// white
+	white++;
       } // if/else
     } // while
-  } // dnf(T[], int, int, T, T)
-
+    result[0] = red;
+    result[1] = white;
+  } // partition(T[], T, Comparator<? super T>, int, int)
+  
   /**
    * Sort a subarray in place using a two-pivot Quicksort.
    * A recursive "kernel" to the "shell" of the sort() method.
@@ -104,20 +116,14 @@ public class Quicksorter<T> implements Sorter<T> {
     if (end - start <= 1) {
       return; // We are sorted.
     } // if
-    /* Calculate both pivots. */
-    int p1 = rng.nextInt(end - start) + start;
-    int p2 = rng.nextInt(end - start) + start;
-    /** Order them. */
-    int temp = p1 < p2 ? p1 : p2;
-    p1 = p1 < p2 ? p1 : p2;
-    p2 = temp;
+    T pivot = values[rng.nextInt(end - start) + start];
+
+    int[] aux = new int[2];
+    Quicksorter.partition(values, pivot, order, start, end, aux);
     
-    /* Exchange members. */
-    dnf(values, start, end, values[p1], values[p2]);
     /* Recurse. */
-    quicksort(values, start, p1);
-    quicksort(values, p1, p2);
-    quicksort(values, p2, end);
+    quicksort(values, start, aux[0]);
+    quicksort(values, aux[1], end);
   }
 
   /**

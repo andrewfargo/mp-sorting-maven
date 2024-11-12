@@ -10,7 +10,6 @@ import java.util.Comparator;
  *
  * @author Samuel A. Rebelsky
  */
-
 public class InsertionSorter<T> implements Sorter<T> {
   // +--------+------------------------------------------------------
   // | Fields |
@@ -41,6 +40,29 @@ public class InsertionSorter<T> implements Sorter<T> {
   // +---------+
 
   /**
+   * Inserts the value at index into it's proper position.
+   * That is, compares that value with values previous until
+   * it is greater than or equal to it, and places it there.
+   *
+   * @param values
+   *   The array.
+   * @param index
+   *   The index of the element to be sorted.
+   */
+  private void insert(T[] values, int index) {
+      T element = values[index];
+      int i = index - 1;
+      while (i >= 0) {
+	if (order.compare(element, values[i]) >= 0) {
+	  break;
+	} // if
+	values[i+1] = values[i];
+	i--;
+      } // while
+      values[i+1] = element;
+  } // insert()
+
+  /**
    * Sort an array in place using insertion sort.
    * Implemented to mimic the process found in the CSC207 reading
    * and algorithm S in Knuth's TAOCP 5.2.1. See README for citations.
@@ -57,17 +79,8 @@ public class InsertionSorter<T> implements Sorter<T> {
    */
   @Override
   public void sort(T[] values) {
-    for (int j = 1; j < values.length; j++) {
-      T element = values[j];
-      int i = j - 1;
-      while (i > 0) {
-	if (order.compare(element, values[i]) >= 0) {
-	  break;
-	} // if
-	values[i+1] = values[i];
-	i--;
-      } // while
-      values[i+1] = element;
+    for (int j = 0; j < values.length; j++) {
+      insert(values, j);
     } // for j
   } // sort(T[])
 } // class InsertionSorter
